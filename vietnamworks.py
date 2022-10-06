@@ -23,41 +23,43 @@ def no_accent_vietnamese(s):
 
 driver = webdriver.Chrome(ChromeDriverManager().install())
 
-# Topcv
-driver.maximize_window()
-driver.get("https://www.vietnamworks.com/")
-driver.implicitly_wait(20)
+def vietnamworksTotal(province, jobInput):
+    # Vietnamworks
+    driver.maximize_window()
+    driver.get("https://www.vietnamworks.com/")
+    driver.implicitly_wait(20)
 
-# If showing pop up advertisement
-# advertisementElement = driver.find_element(By.ID, "iDontCareEventTopDev")
-# if(advertisementElement):
-#     advertisementElement.click()
+    # If showing pop up advertisement
+    # advertisementElement = driver.find_element(By.ID, "iDontCareEventTopDev")
+    # if(advertisementElement):
+    #     advertisementElement.click()
 
-# Comobox select province
-comboxElement = driver.find_element(By.XPATH, "//div[@data-id='multiple-select-search-bar']")
-comboxElement.click()
-listOptionComboBox = driver.find_elements(By.XPATH, "//div//div//div//label")
-province = input()
+    # Comobox select province
+    comboxElement = driver.find_element(By.XPATH, "//div[@data-id='multiple-select-search-bar']")
+    comboxElement.click()
+    listOptionComboBox = driver.find_elements(By.XPATH, "//div//div//div//label")
+    # province = input()
 
-checkSpace=False
+    checkSpace=False
 
-for option in listOptionComboBox:
-    if no_accent_vietnamese(province.lower()) in no_accent_vietnamese(option.text.lower()):
-        option.click()
-        checkSpace=True
-        break
-    
-if checkSpace == False:
     for option in listOptionComboBox:
-        if no_accent_vietnamese(province.lower()) in no_accent_vietnamese(option.text.lower()).replace(" ",""):
+        if no_accent_vietnamese(province.lower()) in no_accent_vietnamese(option.text.lower()):
             option.click()
+            checkSpace=True
             break
-    
-# Input search
-jobInput = input()
-inputElement = driver.find_element(By.XPATH, "//input[@placeholder='Tìm kiếm việc làm, công ty, kỹ năng']")
-inputElement.send_keys(jobInput)
-inputElement.send_keys(Keys.ENTER)
+        
+    if checkSpace == False:
+        for option in listOptionComboBox:
+            if no_accent_vietnamese(province.lower()) in no_accent_vietnamese(option.text.lower()).replace(" ",""):
+                option.click()
+                break
+        
+    # Input search
+    # jobInput = input()
+    inputElement = driver.find_element(By.XPATH, "//input[@placeholder='Tìm kiếm việc làm, công ty, kỹ năng']")
+    inputElement.send_keys(jobInput)
+    inputElement.send_keys(Keys.ENTER)
 
-totalResult = driver.find_element(By.XPATH, "//div//div//div//div//div//div//div//div//div//div//div//div//div//h1")
-print(totalResult.text)
+    totalResult = driver.find_element(By.XPATH, "//div//div//div//div//div//div//div//div//div//div//div//div//div//h1")
+    # print(totalResult.text)
+    return totalResult.text

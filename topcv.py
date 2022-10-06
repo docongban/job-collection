@@ -23,36 +23,38 @@ def no_accent_vietnamese(s):
 
 driver = webdriver.Chrome(ChromeDriverManager().install())
 
-# Topcv
-driver.maximize_window()
-driver.get("https://www.topcv.vn/tim-viec-lam-moi-nhat")
-driver.implicitly_wait(20)
+def topcvTotal(province, jobInput):
+    # Topcv
+    driver.maximize_window()
+    driver.get("https://www.topcv.vn/tim-viec-lam-moi-nhat")
+    driver.implicitly_wait(20)
 
-# Comobox select province
-comboxElement = driver.find_element(By.ID, "select2-city-container")
-comboxElement.click()
-listOptionComboBox = driver.find_elements(By.XPATH, "//li[@class='select2-results__option']")
-province = input()
+    # Comobox select province
+    comboxElement = driver.find_element(By.ID, "select2-city-container")
+    comboxElement.click()
+    listOptionComboBox = driver.find_elements(By.XPATH, "//li[@class='select2-results__option']")
+    # province = input()
 
-checkSpace=False
+    checkSpace=False
 
-for option in listOptionComboBox:
-    if no_accent_vietnamese(province.lower()) in no_accent_vietnamese(option.text.lower()):
-        option.click()
-        checkSpace=True
-        break
-    
-if checkSpace == False:
     for option in listOptionComboBox:
-        if no_accent_vietnamese(province.lower()) in no_accent_vietnamese(option.text.lower()).replace(" ",""):
+        if no_accent_vietnamese(province.lower()) in no_accent_vietnamese(option.text.lower()):
             option.click()
+            checkSpace=True
             break
-    
-# Input search
-jobInput = input()
-inputElement = driver.find_element(By.ID, "keyword")
-inputElement.send_keys(jobInput)
-inputElement.send_keys(Keys.ENTER)
+        
+    if checkSpace == False:
+        for option in listOptionComboBox:
+            if no_accent_vietnamese(province.lower()) in no_accent_vietnamese(option.text.lower()).replace(" ",""):
+                option.click()
+                break
+        
+    # Input search
+    # jobInput = input()
+    inputElement = driver.find_element(By.ID, "keyword")
+    inputElement.send_keys(jobInput)
+    inputElement.send_keys(Keys.ENTER)
 
-totalResult = driver.find_element(By.CSS_SELECTOR, ".job-header span")
-print(totalResult.text)
+    totalResult = driver.find_element(By.CSS_SELECTOR, ".job-header span")
+    # print(totalResult.text)
+    return totalResult.text

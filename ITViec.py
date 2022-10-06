@@ -23,36 +23,38 @@ def no_accent_vietnamese(s):
 
 driver = webdriver.Chrome(ChromeDriverManager().install())
 
-# ITViect
-driver.maximize_window()
-driver.get("https://itviec.com/?job_selected=c-net-angular-developer-upto-2000-usol-vietnam-4410")
-driver.implicitly_wait(20)
+def itviecTotal(province, jobInput):
+    # ITViec
+    driver.maximize_window()
+    driver.get("https://itviec.com/?job_selected=c-net-angular-developer-upto-2000-usol-vietnam-4410")
+    driver.implicitly_wait(20)
 
-# Comobox select province
-comboxElement = driver.find_element(By.ID, "city-ts-control")
-comboxElement.click()
-listOptionComboBox = driver.find_elements(By.XPATH, "//div[@class='option']")
-province = input()
+    # Comobox select province
+    comboxElement = driver.find_element(By.ID, "city-ts-control")
+    comboxElement.click()
+    listOptionComboBox = driver.find_elements(By.XPATH, "//div[@class='option']")
+    # province = input()
 
-checkSpace=False
+    checkSpace=False
 
-for option in listOptionComboBox:
-    if no_accent_vietnamese(province.lower()) in option.text.lower():
-        option.click()
-        checkSpace=True
-        break
-    
-if checkSpace == False:
     for option in listOptionComboBox:
-        if no_accent_vietnamese(province.lower()) in option.text.lower().replace(" ",""):
+        if no_accent_vietnamese(province.lower()) in option.text.lower():
             option.click()
+            checkSpace=True
             break
-    
-# Input search
-jobInput = input()
-inputElement = driver.find_element(By.ID, "query")
-inputElement.send_keys(jobInput)
-inputElement.send_keys(Keys.ENTER)
+        
+    if checkSpace == False:
+        for option in listOptionComboBox:
+            if no_accent_vietnamese(province.lower()) in option.text.lower().replace(" ",""):
+                option.click()
+                break
+        
+    # Input search
+    # jobInput = input()
+    inputElement = driver.find_element(By.ID, "query")
+    inputElement.send_keys(jobInput)
+    inputElement.send_keys(Keys.ENTER)
 
-totalResult = driver.find_element(By.CSS_SELECTOR, "#jobs h1")
-print(totalResult.text)
+    totalResult = driver.find_element(By.CSS_SELECTOR, "#jobs h1")
+    # print(totalResult.text)
+    return totalResult.text
