@@ -7,9 +7,11 @@ import topdev
 import vietnamworks
 import careerbuilder
 
-print("Thành phố: ")
+import graph
+
+print("Thành phố:", end=" ")
 province = input()
-print("Từ khóa: ")
+print("Từ khóa:", end=" ")
 jobInput = input()
 
 # Get result
@@ -31,18 +33,17 @@ print("Total Topdev: ", totalTopdev)
 print("Total Vietnamworks: ", totalVietnamworks)
 print("Total Careerbuilder: ", totalCareerbuilderResult)
 
-# Grap
+# Recommend Job
+print("Lương(USD):", end=" ")
+salary = int(input())
+print("-----------ITViec------------")
+ITViec.recommendJob(salary)
+print("-----------TopCV------------")
+topcv.recommendJob(salary)
+print("-----------VietNamWorks------------")
+vietnamworks.recommendJob(salary)
+
+# Graph
 x = np.array(["IT Viec", "Top CV", "Top Dev", "Vietnamworks", "Careerbuilder"])
 y = np.array([totalITViec, totalTopcv, totalTopdev, totalVietnamworks, totalCareerbuilderResult])
-
-fig, ax = plt.subplots(figsize = (10,5))
-ax.bar(x,y,width=0.4)
-for index,data in enumerate(y):
-    plt.text(x=(index-0.06) , y =data+1 , s=f"{data}" , fontdict=dict(fontsize=16))
-plt.tight_layout()
-
-plt.title('Thành phố: ' + province + ", Từ khóa:" + jobInput)
-plt.xlabel('Trang tuyển dụng')
-plt.ylabel('Tổng')
-plt.bar(x,y)
-plt.show()
+graph.graphJobs(x, y)

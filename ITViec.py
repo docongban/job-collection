@@ -38,14 +38,14 @@ def itviecTotal(province, jobInput):
     checkSpace=False
 
     for option in listOptionComboBox:
-        if no_accent_vietnamese(province.lower()) in option.text.lower():
+        if no_accent_vietnamese(province.lower()) in no_accent_vietnamese(option.text.lower()):
             option.click()
             checkSpace=True
             break
         
     if checkSpace == False:
         for option in listOptionComboBox:
-            if no_accent_vietnamese(province.lower()) in option.text.lower().replace(" ",""):
+            if no_accent_vietnamese(province.lower()) in no_accent_vietnamese(option.text.lower()).replace(" ",""):
                 option.click()
                 break
         
@@ -58,3 +58,27 @@ def itviecTotal(province, jobInput):
     totalResult = driver.find_element(By.CSS_SELECTOR, "#jobs h1")
     # print(totalResult.text)
     return totalResult.text
+
+def recommendJob(salary):
+    driver.implicitly_wait(2000)
+    
+    salaryElements = driver.find_elements(By.XPATH, "//div[@class='pe-3']")
+    salaryElements[1].click()
+
+    listSalaryDropdown = driver.find_elements(By.XPATH, "//div[@class='input-group-prepend']")
+    
+    if salary >= 500 and salary < 1000:
+        listSalaryDropdown[4].click()
+    elif salary >= 1000 and salary < 2000:
+        listSalaryDropdown[5].click()
+    elif salary >= 2000 and salary < 2500:
+        listSalaryDropdown[6].click()
+    elif salary >= 2500:
+        listSalaryDropdown[7].click()
+    salaryElements[3].click()
+
+    listJobs = driver.find_elements(By.XPATH, "//div[@class='details']//h3//a")
+    for index,job in enumerate(listJobs):
+        print(job.get_attribute('href'))
+        if index == 2:
+            break

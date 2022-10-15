@@ -63,3 +63,36 @@ def vietnamworksTotal(province, jobInput):
     totalResult = driver.find_element(By.XPATH, "//div//div//div//div//div//div//div//div//div//div//div//div//div//h1")
     # print(totalResult.text)
     return totalResult.text
+
+def recommendJob(salary):
+    driver.implicitly_wait(2000)
+    
+    addElement = driver.find_element(By.XPATH, "//div[@class='left-bar']/span")
+    addElement.click()
+
+    salaryElement = driver.find_element(By.XPATH, "//div[@class='dropdown-container active']//div[@class='dropdown-row']//div//div")
+    salaryElement.click()
+
+    listSalaryDropdown = driver.find_elements(By.XPATH, "//fieldset[@id='Level']//ul//li")
+    
+    if salary <= 500:
+        listSalaryDropdown[1].click()
+    elif salary > 500 and salary < 1000:
+        listSalaryDropdown[2].click()
+    elif salary >= 1000 and salary < 1500:
+        listSalaryDropdown[3].click()
+    elif salary >= 1500 and salary < 2000:
+        listSalaryDropdown[4].click()
+    elif salary >= 2000 and salary < 3000:
+        listSalaryDropdown[5].click()
+    elif salary >= 3000:
+        listSalaryDropdown[6].click()
+
+    searchElement = driver.find_elements(By.XPATH, "//div[@class='dropdown-container active']//div//button")
+    searchElement[1].click()
+
+    listJobs = driver.find_elements(By.XPATH, "//div[@class='job-info-wrapper ']//div//div//a[@class='job-title ']")
+    for index,job in enumerate(listJobs):
+        print(job.get_attribute('href'))
+        if index == 2:
+            break
