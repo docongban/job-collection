@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Pyscript -->
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <style>
+    
+    body {
+        background-color: #fcfcfc;
+        padding-top: 55px;
+        min-height: 100vh;
+        margin:0;
+        display:flex;
+        flex-direction:column;
+      }
+    </style> 
+
+    <py-env>
+        - pandas
+        - pytextdist
+        - paths:
+            - ./data.csv
+            - ./itviec.csv
+    </py-env>
+</head>
+<body>
+    <!-- write your Python code in py-script tag -->
+    <py-script>
+        import pandas as pd
+        from pytextdist.edit_distance import lcs_similarity
+        import re
+    
+        def no_accent_vietnamese(s):
+            s = re.sub('[áàảãạăắằẳẵặâấầẩẫậ]', 'a', s)
+            s = re.sub('[ÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬ]', 'A', s)
+            s = re.sub('[éèẻẽẹêếềểễệ]', 'e', s)
+            s = re.sub('[ÉÈẺẼẸÊẾỀỂỄỆ]', 'E', s)
+            s = re.sub('[óòỏõọôốồổỗộơớờởỡợ]', 'o', s)
+            s = re.sub('[ÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢ]', 'O', s)
+            s = re.sub('[íìỉĩị]', 'i', s)
+            s = re.sub('[ÍÌỈĨỊ]', 'I', s)
+            s = re.sub('[úùủũụưứừửữự]', 'u', s)
+            s = re.sub('[ÚÙỦŨỤƯỨỪỬỮỰ]', 'U', s)
+            s = re.sub('[ýỳỷỹỵ]', 'y', s)
+            s = re.sub('[ÝỲỶỸỴ]', 'Y', s)
+            s = re.sub('đ', 'd', s)
+            s = re.sub('Đ', 'D', s)
+            return s
+    
+        df = pd.read_csv("./itviec.csv")
+            
+        def searchITViec(*ags, **kws):
+            count=0
+            city = document.getElementById('city').value;
+            keyword = document.getElementById('keyword').value;
+
+            div1 = document.getElementById("div1")
+            <!-- Start reset element parent-->
+            div1.innerHTML = '' 
+            <!-- End reset element parent -->
+
+            listIndex = []
+            dict = {}   
+            for index in df.index:
+                if no_accent_vietnamese(city.lower()) in no_accent_vietnamese(df['City'][index].lower()):
+                    if no_accent_vietnamese(keyword.lower()) in no_accent_vietnamese(df['Tag'][index].lower()):
+                        dict[f"{index}"] = lcs_similarity(no_accent_vietnamese(keyword.lower()),no_accent_vietnamese(df['Tag'][index].lower()))
+            for i in sorted(dict, key=dict.get, reverse=True):
+                listIndex.append(int(i))
+
+            for i,index in enumerate(listIndex):
+
+                div2 = document.createElement("div")
+                div2.className = "col-md-6"
+                div3 = document.createElement("div")
+                div3.className = "card mb-3"
+                div4 = document.createElement("div")
+                div4.className = "row"
+                div5 = document.createElement("div")
+                div5.className = "col-md-4 d-flex justify-content-center align-items-center"
+                img = document.createElement("img")
+                img.className = "img-fluid rounded-start"
+                div6 = document.createElement("div")
+                div6.className = "col-md-8"
+                div7 = document.createElement("div")
+                div7.className = "card-body"
+                a = document.createElement("a")
+                a.className = "reset-a"
+                a.setAttribute("target", "_blank")
+                div8 = document.createElement("h5")
+                div8.className = "card-title text-over-title"
+                div9 = document.createElement("p")
+                div9.className = "card-text text-over-description"
+                div10 = document.createElement("small")
+                div10.className = "card-text text-muted"
+
+                img.setAttribute('src', df['Logo'][index])
+                a.setAttribute('href', df['Link'][index])
+                div8.innerHTML = df['Title'][index]
+                div9.innerHTML = df['Tag'][index]
+                div10.innerHTML = df['City'][index]
+
+                a.appendChild(div8)
+                a.appendChild(div9)
+                a.appendChild(div10)
+                div7.appendChild(a)
+                div6.appendChild(div7)
+                div5.appendChild(img)
+                div4.appendChild(div5)
+                div4.appendChild(div6)
+                div3.appendChild(div4)
+                div2.appendChild(div3)
+                div1.appendChild(div2)
+
+                if i == 3:
+                    break
+
+            <!-- for index in df.index:
+                if no_accent_vietnamese(city.lower()) in no_accent_vietnamese(df['City'][index].lower()):
+                    if no_accent_vietnamese(keyword.lower()) in no_accent_vietnamese(df['Tag'][index].lower()):
+                        count+=1
+                        print(index,'-',df['City'][index],df['Title'][index], df['Link'][index])   
+
+                        div2 = document.createElement("div")
+                        div2.className = "col-md-6"
+                        div3 = document.createElement("div")
+                        div3.className = "card mb-3"
+                        div4 = document.createElement("div")
+                        div4.className = "row"
+                        div5 = document.createElement("div")
+                        div5.className = "col-md-4 d-flex justify-content-center align-items-center"
+                        img = document.createElement("img")
+                        img.className = "img-fluid rounded-start"
+                        div6 = document.createElement("div")
+                        div6.className = "col-md-8"
+                        div7 = document.createElement("div")
+                        div7.className = "card-body"
+                        a = document.createElement("a")
+                        a.className = "reset-a"
+                        a.setAttribute("target", "_blank")
+                        div8 = document.createElement("h5")
+                        div8.className = "card-title text-over-title"
+                        div9 = document.createElement("p")
+                        div9.className = "card-text text-over-description"
+                        div10 = document.createElement("small")
+                        div10.className = "card-text text-muted"
+
+                        img.setAttribute('src', df['Logo'][index])
+                        a.setAttribute('href', df['Link'][index])
+                        div8.innerHTML = df['Title'][index]
+                        div9.innerHTML = df['Tag'][index]
+                        div10.innerHTML = df['City'][index]
+
+                        a.appendChild(div8)
+                        a.appendChild(div9)
+                        a.appendChild(div10)
+                        div7.appendChild(a)
+                        div6.appendChild(div7)
+                        div5.appendChild(img)
+                        div4.appendChild(div5)
+                        div4.appendChild(div6)
+                        div3.appendChild(div4)
+                        div2.appendChild(div3)
+                        div1.appendChild(div2)
+
+                        pyscript.write("Fahrenheit",count)     -->
+    </py-script>   
+    <div class="container">
+            
+        <h1 class="text-center">
+            Tra cứu việc làm
+        </h1>
+        <br />
+        <div class="row">
+            <div class="col-md-5">
+                <label for="keyword">Nhập từ khóa liên quan đến công việc</label>
+                <input id="keyword" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="VD: reactjs, angular, java,..." /></p>
+            </div>
+            <div class="col-md-4">
+                <label for="city">Nhập thành phố</label>
+                <input id="city" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="VD: Hà Nội, Hồ Chí Minh, ..." /></p>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-2 d-flex align-items-center">
+                <button id="search" type="submit"  class="btn btn-info" pys-onClick="searchITViec" style="width: inherit; margin-top: 15px;">Search</button>
+            </div>
+            <div class="col-md-12">
+                <h4 style="padding-bottom: 20px;">Một vài kết quả phù hợp với bạn</h4>
+            </div>
+        </div>
+        <!-- ITViec -->
+        <div class="row">
+            <div class="col-md-12">
+                <h5>ITViec</h5>
+            </div>
+        </div>
+        <div class="row" id="div1">
+            <!-- <div class="col-md-6 div2">
+                <div class="card mb-3 div3">
+                    <div class="row div4">
+                      <div class="col-md-4 div5">
+                        <img src="..." class="img-fluid rounded-start img" alt="...">
+                      </div>
+                      <div class="col-md-8 div6">
+                        <div class="card-body div7">
+                            <a class="reset-a">
+                                <h5 class="card-title text-over-title div8">Card titleCard titleCard titleCard tiCard titleCard titleCard titleCard tiCard titleCard titleCard titleCard titleCard titleCard title   </h5>
+                                <p class="card-text text-over-description div9">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                                <small class="card-text text-muted">Last updated 3 mins ago</small>
+                            </a>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+        <textarea id="Fahrenheit" class="form-control" rows="2" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Result"></textarea></p>
+    </div>  
+</body>
+</html>

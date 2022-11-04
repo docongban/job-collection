@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Pyscript -->
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <style>
+    
+    body {
+        background-color: #fcfcfc;
+        padding-top: 55px;
+        min-height: 100vh;
+        margin:0;
+        display:flex;
+        flex-direction:column;
+      }
+    </style> 
+
+    <py-env>
+        - pandas
+        - pytextdist
+        - paths:
+            - ./data.csv
+    </py-env>
+</head>
+<body>
+    <!-- write your Python code in py-script tag -->
+<py-script>
+    import pandas as pd
+    from pytextdist.edit_distance import lcs_similarity
+    import re
+
+    def no_accent_vietnamese(s):
+        s = re.sub('[áàảãạăắằẳẵặâấầẩẫậ]', 'a', s)
+        s = re.sub('[ÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬ]', 'A', s)
+        s = re.sub('[éèẻẽẹêếềểễệ]', 'e', s)
+        s = re.sub('[ÉÈẺẼẸÊẾỀỂỄỆ]', 'E', s)
+        s = re.sub('[óòỏõọôốồổỗộơớờởỡợ]', 'o', s)
+        s = re.sub('[ÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢ]', 'O', s)
+        s = re.sub('[íìỉĩị]', 'i', s)
+        s = re.sub('[ÍÌỈĨỊ]', 'I', s)
+        s = re.sub('[úùủũụưứừửữự]', 'u', s)
+        s = re.sub('[ÚÙỦŨỤƯỨỪỬỮỰ]', 'U', s)
+        s = re.sub('[ýỳỷỹỵ]', 'y', s)
+        s = re.sub('[ÝỲỶỸỴ]', 'Y', s)
+        s = re.sub('đ', 'd', s)
+        s = re.sub('Đ', 'D', s)
+        return s
+
+    df = pd.read_csv("./data.csv")
+        
+    def convert(*ags, **kws):
+        count=0
+        celsius = document.getElementById('celsius').value;
+        for index in df.index:
+            <!-- if celsius.lower() in df['City'][index].lower(): -->
+            if no_accent_vietnamese(celsius.lower()) in no_accent_vietnamese(df['City'][index].lower()):
+                <!-- if no_accent_vietnamese(str_b.lower()) in no_accent_vietnamese(df['Tag'][index].lower()): -->
+                    count+=1
+                    print(index,'-',df['City'][index],df['Title'][index], df['Link'][index])   
+                    para = document.createElement("a");
+                    para.setAttribute('href', df['Link'][index])
+                    node = document.createTextNode(df['Title'][index])
+                    para.appendChild(node)
+                    element = document.getElementById("link")
+                    element.appendChild(para)
+                    pyscript.write("Fahrenheit",count)    
+</py-script>   
+<div class="container">
+        
+    <h1 class="text-center">
+        Celsius to Fahrenheit Converter
+    </h1>
+    <br />
+    <p><h3>City:</h3>
+    <input id="celsius" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Enter Temp in Celsius" /></p>
+    <button id="convert" type="submit"  class="btn btn-info" pys-onClick="convert">Convert</button>
+    
+    <p>
+    <h4>Result:</h4>
+    <p id="link"></p>
+    <textarea id="Fahrenheit" class="form-control" rows="2" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Result"></textarea></p>
+
+    
+</div>  
+</body>
+</html>
