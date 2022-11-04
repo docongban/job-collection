@@ -27,6 +27,7 @@
         - pandas
         - pytextdist
         - paths:
+            - ./main.py
             - ./data.csv
             - ./itviec.csv
     </py-env>
@@ -36,45 +37,32 @@
     <py-script>
         import pandas as pd
         from pytextdist.edit_distance import lcs_similarity
-        import re
+        from pyodide import create_proxy
+        from main import *
     
-        def no_accent_vietnamese(s):
-            s = re.sub('[áàảãạăắằẳẵặâấầẩẫậ]', 'a', s)
-            s = re.sub('[ÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬ]', 'A', s)
-            s = re.sub('[éèẻẽẹêếềểễệ]', 'e', s)
-            s = re.sub('[ÉÈẺẼẸÊẾỀỂỄỆ]', 'E', s)
-            s = re.sub('[óòỏõọôốồổỗộơớờởỡợ]', 'o', s)
-            s = re.sub('[ÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢ]', 'O', s)
-            s = re.sub('[íìỉĩị]', 'i', s)
-            s = re.sub('[ÍÌỈĨỊ]', 'I', s)
-            s = re.sub('[úùủũụưứừửữự]', 'u', s)
-            s = re.sub('[ÚÙỦŨỤƯỨỪỬỮỰ]', 'U', s)
-            s = re.sub('[ýỳỷỹỵ]', 'y', s)
-            s = re.sub('[ÝỲỶỸỴ]', 'Y', s)
-            s = re.sub('đ', 'd', s)
-            s = re.sub('Đ', 'D', s)
-            return s
-    
-        df = pd.read_csv("./itviec.csv")
-            
-        def searchITViec(*ags, **kws):
-            count=0
+        dfITviec = pd.read_csv("./itviec.csv")
+
+        def search(*ags, **kws):
             city = document.getElementById('city').value;
             keyword = document.getElementById('keyword').value;
-
             div1 = document.getElementById("div1")
             <!-- Start reset element parent-->
             div1.innerHTML = '' 
             <!-- End reset element parent -->
 
-            listIndex = []
-            dict = {}   
-            for index in df.index:
-                if no_accent_vietnamese(city.lower()) in no_accent_vietnamese(df['City'][index].lower()):
-                    if no_accent_vietnamese(keyword.lower()) in no_accent_vietnamese(df['Tag'][index].lower()):
-                        dict[f"{index}"] = lcs_similarity(no_accent_vietnamese(keyword.lower()),no_accent_vietnamese(df['Tag'][index].lower()))
-            for i in sorted(dict, key=dict.get, reverse=True):
-                listIndex.append(int(i))
+            itviecTotal = totalResult(dfITviec,city, keyword)
+            document.getElementById('itviec-total').textContent = f"ITviec có {itviecTotal} việc phù hợp với bạn"
+            searchTop4ITViec(*ags, **kws)
+            
+        def searchAllITViec(*ags, **kws):
+            city = document.getElementById('city').value;
+            keyword = document.getElementById('keyword').value;
+            div1 = document.getElementById("div1")
+            <!-- Start reset element parent-->
+            div1.innerHTML = '' 
+            <!-- End reset element parent -->
+
+            listIndex = searchAll(dfITviec,city, keyword)
 
             for i,index in enumerate(listIndex):
 
@@ -102,11 +90,76 @@
                 div10 = document.createElement("small")
                 div10.className = "card-text text-muted"
 
-                img.setAttribute('src', df['Logo'][index])
-                a.setAttribute('href', df['Link'][index])
-                div8.innerHTML = df['Title'][index]
-                div9.innerHTML = df['Tag'][index]
-                div10.innerHTML = df['City'][index]
+                img.setAttribute('src', dfITviec['Logo'][index])
+                a.setAttribute('href', dfITviec['Link'][index])
+                div8.innerHTML = dfITviec['Title'][index]
+                div9.innerHTML = dfITviec['Tag'][index]
+                div10.innerHTML = dfITviec['City'][index]
+
+                a.appendChild(div8)
+                a.appendChild(div9)
+                a.appendChild(div10)
+                div7.appendChild(a)
+                div6.appendChild(div7)
+                div5.appendChild(img)
+                div4.appendChild(div5)
+                div4.appendChild(div6)
+                div3.appendChild(div4)
+                div2.appendChild(div3)
+                div1.appendChild(div2)
+            
+            div11 = document.createElement("div")
+            div11.className = "col-md-12 d-flex justify-content-center"
+            div13 = document.createElement("button")
+            div13.id = "searchTop4ITViec"
+            div13.className = "btn btn-primary"
+            div13.innerText = "Rút gọn"
+            div13.addEventListener("click", create_proxy(searchTop4ITViec))
+
+            div11.appendChild(div13)
+            div1.appendChild(div11)
+
+        def searchTop4ITViec(*ags, **kws):
+            city = document.getElementById('city').value;
+            keyword = document.getElementById('keyword').value;
+            div1 = document.getElementById("div1")
+            <!-- Start reset element parent-->
+            div1.innerHTML = '' 
+            <!-- End reset element parent -->
+
+            listIndex = searchTop4(dfITviec,city, keyword)
+
+            for i,index in enumerate(listIndex):
+
+                div2 = document.createElement("div")
+                div2.className = "col-md-6"
+                div3 = document.createElement("div")
+                div3.className = "card mb-3"
+                div4 = document.createElement("div")
+                div4.className = "row"
+                div5 = document.createElement("div")
+                div5.className = "col-md-4 d-flex justify-content-center align-items-center"
+                img = document.createElement("img")
+                img.className = "img-fluid rounded-start"
+                div6 = document.createElement("div")
+                div6.className = "col-md-8"
+                div7 = document.createElement("div")
+                div7.className = "card-body"
+                a = document.createElement("a")
+                a.className = "reset-a"
+                a.setAttribute("target", "_blank")
+                div8 = document.createElement("h5")
+                div8.className = "card-title text-over-title"
+                div9 = document.createElement("p")
+                div9.className = "card-text text-over-description"
+                div10 = document.createElement("small")
+                div10.className = "card-text text-muted"
+
+                img.setAttribute('src', dfITviec['Logo'][index])
+                a.setAttribute('href', dfITviec['Link'][index])
+                div8.innerHTML = dfITviec['Title'][index]
+                div9.innerHTML = dfITviec['Tag'][index]
+                div10.innerHTML = dfITviec['City'][index]
 
                 a.appendChild(div8)
                 a.appendChild(div9)
@@ -120,58 +173,17 @@
                 div2.appendChild(div3)
                 div1.appendChild(div2)
 
-                if i == 3:
-                    break
+            div11 = document.createElement("div")
+            div11.className = "col-md-12 d-flex justify-content-center"
+            div12 = document.createElement("button")
+            div12.id = "searchAllITViec"
+            div12.className = "btn btn-primary"
+            div12.innerText = "Xem thêm"
+            div12.addEventListener("click", create_proxy(searchAllITViec))
 
-            <!-- for index in df.index:
-                if no_accent_vietnamese(city.lower()) in no_accent_vietnamese(df['City'][index].lower()):
-                    if no_accent_vietnamese(keyword.lower()) in no_accent_vietnamese(df['Tag'][index].lower()):
-                        count+=1
-                        print(index,'-',df['City'][index],df['Title'][index], df['Link'][index])   
-
-                        div2 = document.createElement("div")
-                        div2.className = "col-md-6"
-                        div3 = document.createElement("div")
-                        div3.className = "card mb-3"
-                        div4 = document.createElement("div")
-                        div4.className = "row"
-                        div5 = document.createElement("div")
-                        div5.className = "col-md-4 d-flex justify-content-center align-items-center"
-                        img = document.createElement("img")
-                        img.className = "img-fluid rounded-start"
-                        div6 = document.createElement("div")
-                        div6.className = "col-md-8"
-                        div7 = document.createElement("div")
-                        div7.className = "card-body"
-                        a = document.createElement("a")
-                        a.className = "reset-a"
-                        a.setAttribute("target", "_blank")
-                        div8 = document.createElement("h5")
-                        div8.className = "card-title text-over-title"
-                        div9 = document.createElement("p")
-                        div9.className = "card-text text-over-description"
-                        div10 = document.createElement("small")
-                        div10.className = "card-text text-muted"
-
-                        img.setAttribute('src', df['Logo'][index])
-                        a.setAttribute('href', df['Link'][index])
-                        div8.innerHTML = df['Title'][index]
-                        div9.innerHTML = df['Tag'][index]
-                        div10.innerHTML = df['City'][index]
-
-                        a.appendChild(div8)
-                        a.appendChild(div9)
-                        a.appendChild(div10)
-                        div7.appendChild(a)
-                        div6.appendChild(div7)
-                        div5.appendChild(img)
-                        div4.appendChild(div5)
-                        div4.appendChild(div6)
-                        div3.appendChild(div4)
-                        div2.appendChild(div3)
-                        div1.appendChild(div2)
-
-                        pyscript.write("Fahrenheit",count)     -->
+            div11.appendChild(div12)
+            div1.appendChild(div11)
+            
     </py-script>   
     <div class="container">
             
@@ -190,7 +202,7 @@
             </div>
             <div class="col-md-1"></div>
             <div class="col-md-2 d-flex align-items-center">
-                <button id="search" type="submit"  class="btn btn-info" pys-onClick="searchITViec" style="width: inherit; margin-top: 15px;">Search</button>
+                <button id="search" type="submit"  class="btn btn-info" pys-onClick="search" style="width: inherit; margin-top: 15px;">Search</button>
             </div>
             <div class="col-md-12">
                 <h4 style="padding-bottom: 20px;">Một vài kết quả phù hợp với bạn</h4>
@@ -199,7 +211,7 @@
         <!-- ITViec -->
         <div class="row">
             <div class="col-md-12">
-                <h5>ITViec</h5>
+                <h5 id="itviec-total"></h5>
             </div>
         </div>
         <div class="row" id="div1">
@@ -220,9 +232,12 @@
                       </div>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-12 div11">
+                <button type="button" class="btn btn-primary div12">Xem thêm</button>
+                <button type="button" class="btn btn-primary div13">Rút gọn</button>
             </div> -->
         </div>
-        <textarea id="Fahrenheit" class="form-control" rows="2" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Result"></textarea></p>
     </div>  
 </body>
 </html>
