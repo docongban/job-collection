@@ -30,7 +30,7 @@ def itviecTotal():
         for index,title in enumerate(listTitles):
             count+=1
             print(count,'-',title.text,'-',title.get_attribute('href'))
-            data.append(['itviec', title.text, listCitys[index].text, listTags[index].text, title.get_attribute('href'), listLogoes[index].get_attribute('src')])
+            data.append(['careerbuilder', title.text, listCitys[index].text, listTags[index].text, title.get_attribute('href'), listLogoes[index].get_attribute('src')])
         # time.sleep(2)
   
     # Create DataFrame
