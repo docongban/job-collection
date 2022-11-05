@@ -30,6 +30,7 @@
             - ./main.py
             - ./data.csv
             - ./itviec.csv
+            - ./careerbuilder.csv
     </py-env>
 </head>
 <body>
@@ -41,18 +42,25 @@
         from main import *
     
         dfITviec = pd.read_csv("./itviec.csv")
+        dfCareerbuilder = pd.read_csv("./careerbuilder.csv")
 
         def search(*ags, **kws):
             city = document.getElementById('city').value;
             keyword = document.getElementById('keyword').value;
-            div1 = document.getElementById("div1")
             <!-- Start reset element parent-->
+            div1 = document.getElementById("div1")
             div1.innerHTML = '' 
+            careerbuilder = document.getElementById("careerbuilder")
+            careerbuilder.innerHTML = '' 
             <!-- End reset element parent -->
 
             itviecTotal = totalResult(dfITviec,city, keyword)
             document.getElementById('itviec-total').textContent = f"ITviec có {itviecTotal} việc phù hợp với bạn"
             searchTop4ITViec(*ags, **kws)
+
+            careerbuilderTotal = totalResult(dfCareerbuilder,city, keyword)
+            document.getElementById('careerbuilder-total').textContent = f"Careerbuilder có {careerbuilderTotal} việc phù hợp với bạn"
+            searchTop4Careerbuilder(*ags, **kws)
             
         def searchAllITViec(*ags, **kws):
             city = document.getElementById('city').value;
@@ -183,7 +191,136 @@
 
             div11.appendChild(div12)
             div1.appendChild(div11)
+        
+        def searchAllCareerbuilder(*ags, **kws):
+            city = document.getElementById('city').value;
+            keyword = document.getElementById('keyword').value;
+            careerbuilder = document.getElementById("careerbuilder")
+            <!-- Start reset element parent-->
+            careerbuilder.innerHTML = '' 
+            <!-- End reset element parent -->
+
+            listIndex = searchAll(dfCareerbuilder,city, keyword)
+
+            for i,index in enumerate(listIndex):
+
+                div2 = document.createElement("div")
+                div2.className = "col-md-6"
+                div3 = document.createElement("div")
+                div3.className = "card mb-3"
+                div4 = document.createElement("div")
+                div4.className = "row"
+                div5 = document.createElement("div")
+                div5.className = "col-md-4 d-flex justify-content-center align-items-center"
+                img = document.createElement("img")
+                img.className = "img-fluid rounded-start"
+                div6 = document.createElement("div")
+                div6.className = "col-md-8"
+                div7 = document.createElement("div")
+                div7.className = "card-body"
+                a = document.createElement("a")
+                a.className = "reset-a"
+                a.setAttribute("target", "_blank")
+                div8 = document.createElement("h5")
+                div8.className = "card-title text-over-title"
+                div9 = document.createElement("p")
+                div9.className = "card-text text-over-description"
+                div10 = document.createElement("small")
+                div10.className = "card-text text-muted"
+
+                img.setAttribute('src', dfCareerbuilder['Logo'][index])
+                a.setAttribute('href', dfCareerbuilder['Link'][index])
+                div8.innerHTML = dfCareerbuilder['Title'][index]
+                div9.innerHTML = dfCareerbuilder['Tag'][index]
+                div10.innerHTML = dfCareerbuilder['City'][index]
+
+                a.appendChild(div8)
+                a.appendChild(div9)
+                a.appendChild(div10)
+                div7.appendChild(a)
+                div6.appendChild(div7)
+                div5.appendChild(img)
+                div4.appendChild(div5)
+                div4.appendChild(div6)
+                div3.appendChild(div4)
+                div2.appendChild(div3)
+                careerbuilder.appendChild(div2)
             
+            div11 = document.createElement("div")
+            div11.className = "col-md-12 d-flex justify-content-center"
+            div13 = document.createElement("button")
+            div13.id = "searchTop4Careerbuilder"
+            div13.className = "btn btn-primary"
+            div13.innerText = "Rút gọn"
+            div13.addEventListener("click", create_proxy(searchTop4Careerbuilder))
+
+            div11.appendChild(div13)
+            careerbuilder.appendChild(div11)
+
+        def searchTop4Careerbuilder(*ags, **kws):
+            city = document.getElementById('city').value;
+            keyword = document.getElementById('keyword').value;
+            careerbuilder = document.getElementById("careerbuilder")
+            <!-- Start reset element parent-->
+            careerbuilder.innerHTML = '' 
+            <!-- End reset element parent -->
+
+            listIndex = searchTop4(dfCareerbuilder,city, keyword)
+
+            for i,index in enumerate(listIndex):
+
+                div2 = document.createElement("div")
+                div2.className = "col-md-6"
+                div3 = document.createElement("div")
+                div3.className = "card mb-3"
+                div4 = document.createElement("div")
+                div4.className = "row"
+                div5 = document.createElement("div")
+                div5.className = "col-md-4 d-flex justify-content-center align-items-center"
+                img = document.createElement("img")
+                img.className = "img-fluid rounded-start"
+                div6 = document.createElement("div")
+                div6.className = "col-md-8"
+                div7 = document.createElement("div")
+                div7.className = "card-body"
+                a = document.createElement("a")
+                a.className = "reset-a"
+                a.setAttribute("target", "_blank")
+                div8 = document.createElement("h5")
+                div8.className = "card-title text-over-title"
+                div9 = document.createElement("p")
+                div9.className = "card-text text-over-description"
+                div10 = document.createElement("small")
+                div10.className = "card-text text-muted"
+
+                img.setAttribute('src', dfCareerbuilder['Logo'][index])
+                a.setAttribute('href', dfCareerbuilder['Link'][index])
+                div8.innerHTML = dfCareerbuilder['Title'][index]
+                div9.innerHTML = dfCareerbuilder['Tag'][index]
+                div10.innerHTML = dfCareerbuilder['City'][index]
+
+                a.appendChild(div8)
+                a.appendChild(div9)
+                a.appendChild(div10)
+                div7.appendChild(a)
+                div6.appendChild(div7)
+                div5.appendChild(img)
+                div4.appendChild(div5)
+                div4.appendChild(div6)
+                div3.appendChild(div4)
+                div2.appendChild(div3)
+                careerbuilder.appendChild(div2)
+
+            div11 = document.createElement("div")
+            div11.className = "col-md-12 d-flex justify-content-center"
+            div12 = document.createElement("button")
+            div12.id = "searchAllCareerbuilder"
+            div12.className = "btn btn-primary"
+            div12.innerText = "Xem thêm"
+            div12.addEventListener("click", create_proxy(searchAllCareerbuilder))
+
+            div11.appendChild(div12)
+            careerbuilder.appendChild(div11)
     </py-script>   
     <div class="container">
             
@@ -238,6 +375,14 @@
                 <button type="button" class="btn btn-primary div13">Rút gọn</button>
             </div> -->
         </div>
+
+        <!-- Careerbuilder -->
+        <div class="row">
+            <div class="col-md-12">
+                <h5 id="careerbuilder-total"></h5>
+            </div>
+        </div>
+        <div class="row" id="careerbuilder"></div>
     </div>  
 </body>
 </html>
