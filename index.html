@@ -26,6 +26,8 @@
     <py-env>
         - pandas
         - pytextdist
+        - matplotlib
+        - numpy
         - paths:
             - ./main.py
             - ./data.csv
@@ -38,6 +40,9 @@
     <!-- write your Python code in py-script tag -->
     <py-script>
         import pandas as pd
+        import matplotlib.pyplot as plt
+        import numpy as np
+        
         from pytextdist.edit_distance import lcs_similarity
         from pyodide import create_proxy
         from main import *
@@ -46,6 +51,28 @@
         dfCareerbuilder = pd.read_csv("./careerbuilder.csv")
         dfTopcv = pd.read_csv("./topcv.csv")
         dfTopcv = dfTopcv.fillna("")
+
+        def statistical(*ags, **kws):
+            city = document.getElementById('city').value;
+            keyword = document.getElementById('keyword').value;
+
+            itviecTotal = totalResult(dfITviec,city, keyword)
+            careerbuilderTotal = totalResult(dfCareerbuilder,city, keyword)
+            topcvTotal = totalResult(dfTopcv,city, keyword)
+
+            x = np.array(["IT Viec", "Top CV", "Careerbuilder"])
+            y = np.array([itviecTotal, topcvTotal, careerbuilderTotal])
+
+            fig, ax = plt.subplots()
+
+            for i in range(len(x)):
+                plt.text(i,y[i],y[i],ha = 'center')
+                
+            plt.xlabel('Trang tuyển dụng')
+            plt.ylabel('Tổng số lượng việc')
+            plt.bar(x,y, color = ['#0b84a5', '#f6c85f', '#9dd866'], width=0.35, alpha=0.7)
+            <!-- fig -->
+            pyscript.write('graph', fig)
 
         def search(*ags, **kws):
             city = document.getElementById('city').value;
@@ -472,11 +499,13 @@
                 <label for="keyword">Nhập từ khóa liên quan đến công việc</label>
                 <input id="keyword" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="VD: reactjs, angular, java,..." /></p>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="city">Nhập thành phố</label>
                 <input id="city" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="VD: Hà Nội, Hồ Chí Minh, ..." /></p>
             </div>
-            <div class="col-md-1"></div>
+            <div class="col-md-2 d-flex align-items-center">
+                <button id="statistical" pys-onClick="statistical" type="button" class="btn btn-danger" style="width: inherit; margin-top: 15px;">Thống kê</button>
+            </div>
             <div class="col-md-2 d-flex align-items-center">
                 <button id="search" type="submit"  class="btn btn-info" pys-onClick="search" style="width: inherit; margin-top: 15px;">Search</button>
             </div>
@@ -484,6 +513,14 @@
                 <h4 style="padding-bottom: 20px;">Một vài kết quả phù hợp với bạn</h4>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div id="graph">
+                </div>
+            </div>
+        </div>
+
         <!-- ITViec -->
         <div class="row">
             <div class="col-md-12">
