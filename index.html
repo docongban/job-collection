@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Pyscript -->
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <style>
+    
+    body {
+        background-color: #fcfcfc;
+        padding-top: 55px;
+        min-height: 100vh;
+        margin:0;
+        display:flex;
+        flex-direction:column;
+      }
+    </style> 
+
+    <py-env>
+        - pandas
+        - pytextdist
+        - matplotlib
+        - numpy
+        - selenium
+        - webdriver_manager
+        - paths:
+            - ./ITViec.py
+    </py-env>
+</head>
+<body>
+    <!-- write your Python code in py-script tag -->
+<py-script>
+    import pandas as pd
+    from selenium import webdriver
+    from webdriver_manager.chrome import ChromeDriverManager
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.common.keys import Keys
+
+    import re
+    import ITViec
+    
+        
+    def convert(*ags, **kws):
+        ITViec.itviecTotal('ha noi', 'reactjs')
+        
+        pyscript.write("Fahrenheit",ITViec.recommendJob())    
+</py-script>   
+<div class="container">
+        
+    <h1 class="text-center">
+        Celsius to Fahrenheit Converter
+    </h1>
+    <br />
+    <p><h3>City:</h3>
+    <input id="celsius" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Enter Temp in Celsius" /></p>
+    <button id="convert" type="submit"  class="btn btn-info" pys-onClick="convert">Convert</button>
+    
+    <p>
+    <h4>Result:</h4>
+    <p id="link"></p>
+    <textarea id="Fahrenheit" class="form-control" rows="2" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Result"></textarea></p>
+
+    
+</div>  
+</body>
+</html>

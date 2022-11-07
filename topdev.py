@@ -35,7 +35,7 @@ def topdevTotal(province, jobInput):
         advertisementElement.click()
 
     # Comobox select province
-    comboxElement = driver.find_element(By.XPATH, "//button[@title='Tất cả địa điểm']")
+    comboxElement = driver.find_element(By.XPATH, "//form[@id='search_form_recruit']//div//div//div//button")
     comboxElement.click()
     listOptionComboBox = driver.find_elements(By.XPATH, "//li//a//span[@class='text']")
     # province = input()

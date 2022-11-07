@@ -16,7 +16,7 @@ jobInput = input()
 
 # Get result
 itviecResult = ITViec.itviecTotal(province,jobInput)
-topcvResult = topcv.topcvTotal(province,jobInput)
+topcvResult = topcv.topcvTotal(province, jobInput)
 topdevResult = topdev.topdevTotal(province,jobInput)
 vietnamworksResult = vietnamworks.vietnamworksTotal(province,jobInput)
 careerbuilderResult = careerbuilder.careerbuilderTotal(province,jobInput)
@@ -34,14 +34,14 @@ print("Total Vietnamworks: ", totalVietnamworks)
 print("Total Careerbuilder: ", totalCareerbuilderResult)
 
 # Recommend Job
-print("Lương(USD):", end=" ")
-salary = int(input())
+# print("Lương(USD):", end=" ")
+# salary = int(input())
 print("-----------ITViec------------")
-ITViec.recommendJob(salary)
-print("-----------TopCV------------")
-topcv.recommendJob(salary)
+ITViec.recommendJob()
 print("-----------VietNamWorks------------")
-vietnamworks.recommendJob(salary)
+vietnamworks.recommendJob()
+print("-----------TopCV------------")
+# topcv.recommendJob()
 
 # Graph
 x = np.array(["IT Viec", "Top CV", "Top Dev", "Vietnamworks", "Careerbuilder"])
